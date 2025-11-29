@@ -2,7 +2,7 @@ package referee
 
 import (
 	"github.com/sirupsen/logrus"
-	rmcp "github.com/stydxm/RMMock/pkg/gen"
+	"github.com/stydxm/RMMock/pkg/rmcp"
 	"google.golang.org/protobuf/proto"
 	"time"
 )

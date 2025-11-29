@@ -1,0 +1,249 @@
+syntax = "proto3";
+option go_package = "pkg/rmcp;rmcp"; //RoboMaster Client Protocol
+
+message RemoteControl {
+  int32 mouse_x = 1;
+  int32 mouse_y = 2;
+  int32 mouse_z = 3;
+  bool left_button_down = 4;
+  bool right_button_down = 5;
+  uint32 keyboard_value = 6;
+  bool mid_button_down = 7;
+  bytes data = 8;
+}
+
+message GameStatus {
+  uint32 current_round = 1;
+  uint32 total_rounds = 2;
+  uint32 red_score = 3;
+  uint32 blue_score = 4;
+  uint32 current_stage = 5;
+  int32 stage_countdown_sec = 6;
+  int32 stage_elapsed_sec = 7;
+  bool is_paused = 8;
+}
+
+message GlobalUnitStatus {
+  uint32 base_health = 1;
+  uint32 base_status = 2;
+  uint32 base_shield = 3;
+  uint32 outpost_health = 4;
+  uint32 outpost_status = 5;
+  repeated uint32 robot_health = 6;
+  repeated int32 robot_bullets = 7;
+  uint32 total_damage_red = 8;
+  uint32 total_damage_blue = 9;
+}
+
+message GlobalLogisticsStatus {
+  uint32 remaining_economy = 1;
+  uint64 total_economy_obtained = 2;
+  uint32 tech_level = 3;
+  uint32 encryption_level = 4;
+}
+
+message GlobalSpecialMechanism {
+  repeated uint32 mechanism_id = 1;
+  repeated int32 mechanism_time_sec = 2;
+}
+
+message Event {
+  int32 event_id = 1;
+  string param = 2;
+}
+
+message RobotInjuryStat {
+  uint32 total_damage = 1;
+  uint32 collision_damage = 2;
+  uint32 small_projectile_damage = 3;
+  uint32 large_projectile_damage = 4;
+  uint32 dart_splash_damage = 5;
+  uint32 module_offline_damage = 6;
+  uint32 wifi_offline_damage = 7;
+  uint32 penalty_damage = 8;
+  uint32 server_kill_damage = 9;
+  uint32 killer_id = 10;
+}
+
+message RobotRespawnStatus {
+  bool is_pending_respawn = 1;
+  uint32 total_respawn_progress = 2;
+  uint32 current_respawn_progress = 3;
+  bool can_free_respawn = 4;
+  uint32 gold_cost_for_respawn = 5;
+  bool can_pay_for_respawn = 6;
+}
+
+message RobotStaticStatus {
+  uint32 connection_state = 1;
+  uint32 field_state = 2;
+  uint32 alive_state = 3;
+  uint32 robot_id = 4;
+  uint32 robot_type = 5;
+  uint32 performance_system_shooter = 6;
+  uint32 performance_system_chassis = 7;
+  uint32 level = 8;
+  uint32 max_health = 9;
+  uint32 max_heat = 10;
+  float heat_cooldown_rate = 11;
+  uint32 max_power = 12;
+  uint32 max_buffer_energy = 13;
+  uint32 max_chassis_energy = 14;
+}
+
+message RobotDynamicStatus {
+  uint32 current_health = 1;
+  float current_heat = 2;
+  float last_projectile_fire_rate = 3;
+  uint32 current_chassis_energy = 4;
+  uint32 current_buffer_energy = 5;
+  uint32 current_experience = 6;
+  uint32 experience_for_upgrade = 7;
+  uint32 total_projectiles_fired = 8;
+  uint32 remaining_ammo = 9;
+  bool is_out_of_combat = 10;
+  uint32 out_of_combat_countdown = 11;
+  bool can_remote_heal = 12;
+  bool can_remote_ammo = 13;
+}
+
+message RobotModuleStatus {
+  uint32 power_manager = 1;
+  uint32 rfid = 2;
+  uint32 light_strip = 3;
+  uint32 small_shooter = 4;
+  uint32 big_shooter = 5;
+  uint32 uwb = 6;
+  uint32 armor = 7;
+  uint32 video_transmission = 8;
+  uint32 capacitor = 9;
+  uint32 main_controller = 10;
+}
+
+message RobotPosition {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float yaw = 4;
+}
+
+message Buff {
+  uint32 robot_id = 1;
+  uint32 buff_type = 2;
+  int32 buff_level = 3;
+  uint32 buff_max_time = 4;
+  uint32 buff_left_time = 5;
+  string msg_params = 6;
+}
+
+message PenaltyInfo {
+  uint32 penalty_type = 1;
+  uint32 penalty_effect_sec = 2;
+  uint32 total_penalty_num = 3;
+}
+
+message RobotPathPlanInfo {
+  uint32 intention = 1;
+  uint32 start_pos_x = 2;
+  uint32 start_pos_y = 3;
+  repeated int32 offset_x = 4 [packed = true];
+  repeated int32 offset_y = 5 [packed = true];
+  uint32 sender_id = 6;
+}
+
+message MapClickInfoNotify {
+  uint32 is_send_all = 1;
+  bytes robot_id = 2;
+  uint32 mode = 3;
+  uint32 enemy_id = 4;
+  uint32 ascii = 5;
+  uint32 type = 6;
+  uint32 screen_x = 7;
+  uint32 screen_y = 8;
+  float map_x = 9;
+  float map_y = 10;
+}
+
+message RaderInfoToClient { //原文即为`Rader`
+  uint32 target_robot_id = 1;
+  float target_pos_x = 2;
+  float target_pos_y = 3;
+  float torward_angle = 4;
+  uint32 is_high_light = 5;
+}
+
+message CustomByteBlock {
+  bytes data = 1;
+}
+
+message AssemblyCommand {
+  uint32 operation = 1;
+  uint32 difficulty = 2;
+}
+
+message TechCoreMotionStateSync {
+  uint32 maximum_difficulty_level = 1;
+  uint32 status = 2;
+}
+
+message RobotPerformanceSelectionCommand {
+  uint32 shooter = 1;
+  uint32 chassis = 2;
+}
+
+message RobotPerformanceSelectionSync {
+  uint32 shooter = 1;
+  uint32 chassis = 2;
+}
+
+message HeroDeployModeEventCommand {
+  uint32 mode = 1;
+}
+
+message DeployModeStatusSync {
+  uint32 status = 1;
+}
+
+message RuneActivateCommand {
+  uint32 activate = 1;
+}
+
+message RuneStatusSync {
+  uint32 rune_status = 1;
+  uint32 activated_arms = 2;
+  uint32 average_rings = 3;
+}
+
+message SentinelStatusSync {
+  uint32 posture_id = 1;
+  bool is_weakened = 2;
+}
+
+message DartCommand {
+  uint32 target_id = 1;
+  bool open = 2;
+}
+
+message DartSelectTargetStatusSync {
+  uint32 target_id = 1;
+  bool open = 2;
+}
+
+message GuardCtrlCommand {
+  uint32 command_id = 1;
+}
+
+message GuardCtrlResult {
+  uint32 command_id = 1;
+  uint32 result_code = 2;
+}
+
+message AirSupportCommand {
+  uint32 command_id = 1;
+}
+
+message AirSupportStatusSync {
+  uint32 airsupport_status = 1;
+  uint32 left_time = 2;
+  uint32 cost_coins = 3;
+}
