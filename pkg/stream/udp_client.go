@@ -23,9 +23,9 @@ func PacketFactory(frameID, sliceID uint16, sliceData []byte) []byte {
 	packet := make([]byte, 8+len(sliceData))
 	sliceSize := uint32(len(sliceData))
 
-	binary.BigEndian.PutUint16(packet[0:2], frameID)
-	binary.BigEndian.PutUint16(packet[2:4], sliceID)
-	binary.BigEndian.PutUint32(packet[4:8], sliceSize)
+	binary.LittleEndian.PutUint16(packet[0:2], frameID)
+	binary.LittleEndian.PutUint16(packet[2:4], sliceID)
+	binary.LittleEndian.PutUint32(packet[4:8], sliceSize)
 	copy(packet[8:], sliceData)
 
 	return packet
