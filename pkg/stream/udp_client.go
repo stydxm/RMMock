@@ -2,8 +2,9 @@ package stream
 
 import (
 	"encoding/binary"
-	"github.com/sirupsen/logrus"
 	"net"
+
+	"github.com/sirupsen/logrus"
 )
 
 func GetUDPConn() *net.UDPConn {
@@ -19,13 +20,12 @@ func GetUDPConn() *net.UDPConn {
 	return conn
 }
 
-func PacketFactory(frameID, sliceID uint16, sliceData []byte) []byte {
+func PacketFactory(frameID, sliceID uint16, frameSize uint32, sliceData []byte) []byte {
 	packet := make([]byte, 8+len(sliceData))
-	sliceSize := uint32(len(sliceData))
 
 	binary.LittleEndian.PutUint16(packet[0:2], frameID)
 	binary.LittleEndian.PutUint16(packet[2:4], sliceID)
-	binary.LittleEndian.PutUint32(packet[4:8], sliceSize)
+	binary.LittleEndian.PutUint32(packet[4:8], frameSize)
 	copy(packet[8:], sliceData)
 
 	return packet
@@ -34,7 +34,8 @@ func PacketFactory(frameID, sliceID uint16, sliceData []byte) []byte {
 func SendPacket(conn *net.UDPConn, encodedData []byte, frameID uint16) {
 	// 计算需要多少个切片
 	packetSize := 1000 // UDP包最大推荐大小，留出头部空间
-	totalSlices := len(encodedData) / packetSize
+	frameSize := len(encodedData)
+	totalSlices := frameSize / packetSize
 	if len(encodedData)%packetSize != 0 {
 		totalSlices++
 	}
@@ -48,7 +49,7 @@ func SendPacket(conn *net.UDPConn, encodedData []byte, frameID uint16) {
 		}
 
 		// 通过UDP发送数据包到服务器
-		packet := PacketFactory(frameID, sliceID, encodedData[start:end])
+		packet := PacketFactory(frameID, sliceID, uint32(frameSize), encodedData[start:end])
 		_, err := conn.Write(packet)
 		if err != nil {
 			logrus.Errorf("发送切片失败: %v", err)
